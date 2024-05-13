@@ -1,0 +1,11 @@
+---
+key: "API_membres-1.0.0"
+name : "API_membres"
+displayName : "API_membres"
+description: "Sample API"
+version: "1.0.0"
+serviceUrl: "https://{MI_HOST}:{MI_PORT}/membres"
+definitionType: "OAS3"
+securityType: "BASIC"
+mutualSSLEnabled: false
+apiId : "null"

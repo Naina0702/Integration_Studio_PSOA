@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?><artifacts>
+    <artifact name="Livre_EP" groupId="com.example.endpoint" version="1.0.0" type="synapse/endpoint" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/endpoints/Livre_EP.xml</file>
+    </artifact>
+    <artifact name="API_livre" groupId="com.example.api" version="1.0.0" type="synapse/api" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/api/API_livre.xml</file>
+    </artifact>
+    <artifact name="API_livre_swagger" groupId="com.example.metadata" version="1.0.0" type="synapse/metadata" serverRole="EnterpriseServiceBus">
+        <file>src/main/resources/metadata/API_livre_swagger.yaml</file>
+    </artifact>
+    <artifact name="API_livre_metadata" groupId="com.example.metadata" version="1.0.0" type="synapse/metadata" serverRole="EnterpriseServiceBus">
+        <file>src/main/resources/metadata/API_livre_metadata.yaml</file>
+    </artifact>
+    <artifact name="Livre_POST_EP" groupId="com.example.endpoint" version="1.0.0" type="synapse/endpoint" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/endpoints/Livre_POST_EP.xml</file>
+    </artifact>
+    <artifact name="Generer_IDLivre" groupId="com.example.endpoint" version="1.0.0" type="synapse/endpoint" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/endpoints/Generer_IDLivre.xml</file>
+    </artifact>
+    <artifact name="API_membres" groupId="com.example.api" version="1.0.0" type="synapse/api" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/api/API_membres.xml</file>
+    </artifact>
+    <artifact name="API_membres_swagger" groupId="com.example.metadata" version="1.0.0" type="synapse/metadata" serverRole="EnterpriseServiceBus">
+        <file>src/main/resources/metadata/API_membres_swagger.yaml</file>
+    </artifact>
+    <artifact name="API_membres_metadata" groupId="com.example.metadata" version="1.0.0" type="synapse/metadata" serverRole="EnterpriseServiceBus">
+        <file>src/main/resources/metadata/API_membres_metadata.yaml</file>
+    </artifact>
+    <artifact name="POST_MEMBRE_EP" groupId="com.example.endpoint" version="1.0.0" type="synapse/endpoint" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/endpoints/POST_MEMBRE_EP.xml</file>
+    </artifact>
+    <artifact name="EP_GET_MEMBRES" groupId="com.example.endpoint" version="1.0.0" type="synapse/endpoint" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/endpoints/EP_GET_MEMBRES.xml</file>
+    </artifact>
+    <artifact name="API_emprunts" groupId="com.example.api" version="1.0.0" type="synapse/api" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/api/API_emprunts.xml</file>
+    </artifact>
+    <artifact name="API_emprunts_swagger" groupId="com.example.metadata" version="1.0.0" type="synapse/metadata" serverRole="EnterpriseServiceBus">
+        <file>src/main/resources/metadata/API_emprunts_swagger.yaml</file>
+    </artifact>
+    <artifact name="API_emprunts_metadata" groupId="com.example.metadata" version="1.0.0" type="synapse/metadata" serverRole="EnterpriseServiceBus">
+        <file>src/main/resources/metadata/API_emprunts_metadata.yaml</file>
+    </artifact>
+    <artifact name="EP_POST_EMPRUNTS" groupId="com.example.endpoint" version="1.0.0" type="synapse/endpoint" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/endpoints/EP_POST_EMPRUNTS.xml</file>
+    </artifact>
+    <artifact name="EP_UPDATE_DISPO" groupId="com.example.endpoint" version="1.0.0" type="synapse/endpoint" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/endpoints/EP_UPDATE_DISPO.xml</file>
+    </artifact>
+</artifacts>

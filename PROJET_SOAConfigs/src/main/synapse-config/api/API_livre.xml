@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<api context="/livre" name="API_livre" xmlns="http://ws.apache.org/ns/synapse">
+    <resource methods="GET" uri-template="/{qr}">
+        <inSequence>
+            <log level="custom" separator="{blank}">
+                <property name="Log message" value="&quot;essai&quot;"/>
+            </log>
+            <call>
+                <endpoint key="Livre_EP"/>
+            </call>
+            <respond/>
+        </inSequence>
+        <outSequence/>
+        <faultSequence/>
+    </resource>
+    <resource methods="POST" uri-template="/Enregistrer_livre">
+        <inSequence>
+            <!-- Extraction des données du livre à partir de la requête POST -->
+            <property expression="$body//titre" name="titre" scope="default" type="STRING"/>
+            <property expression="$body//auteur" name="auteur" scope="default" type="STRING"/>
+            <property expression="$body//categorie" name="categorie" scope="default" type="STRING"/>
+            <property expression="$body//exemplaire" name="exemplaire" scope="default" type="INTEGER"/>
+            <property expression="$body//pochette" name="pochette" scope="default" type="STRING"/>
+            <!-- Appel à l'autre endpoint pour récupérer l'ID du livre -->
+            <call>
+                <endpoint key="Generer_IDLivre"/>
+            </call>
+            <!-- Extraction de l'ID du livre de la réponse -->
+            <property expression="json-eval($.id_livre)" name="id_livre" scope="default" type="STRING"/>
+            <!-- Création de l'objet JSON contenant les détails du livre -->
+            <payloadFactory media-type="json">
+                <format>{"id_livre":"$1","titre":"$2","auteur":"$3","categorie":"$4","exemplaire":$5,"pochette":"$6"}</format>
+                <args>
+                    <arg evaluator="xml" expression="$ctx:id_livre"/>
+                    <arg evaluator="xml" expression="$ctx:titre"/>
+                    <arg evaluator="xml" expression="$ctx:auteur"/>
+                    <arg evaluator="xml" expression="$ctx:categorie"/>
+                    <arg evaluator="xml" expression="$ctx:exemplaire"/>
+                    <arg evaluator="xml" expression="$ctx:pochette"/>
+                </args>
+            </payloadFactory>
+            <!-- Envoi de la réponse contenant les détails du livre au client -->
+            <call>
+                <endpoint key="Livre_POST_EP"/>
+            </call>
+            <respond/>
+        </inSequence>
+        <outSequence/>
+        <faultSequence/>
+    </resource>
+    <resource methods="DELETE" uri-template="/{id_livre}">
+        <inSequence>
+            <!-- Continuez avec la requête DELETE normale -->
+            <log separator="{blank}">
+                <property name="Delete" value="Supprimer un livre"/>
+            </log>
+            <!-- Ajoutez les en-têtes CORS nécessaires pour permettre les requêtes DELETE -->
+            <property name="Access-Control-Allow-Origin" scope="transport" type="STRING" value="*"/>
+            <property name="Access-Control-Allow-Methods" scope="transport" type="STRING" value="DELETE"/>
+            <!-- Répondez à la requête OPTIONS préliminaire avec les en-têtes CORS -->
+            <filter regex="OPTIONS" source="$axis2:HTTP_METHOD">
+                <then>
+                    <property name="Access-Control-Allow-Headers" scope="transport" type="STRING" value="authorization,Content-Type"/>
+                    <respond/>
+                </then>
+                <else>
+                    <call>
+                        <endpoint>
+                            <http method="delete" statistics="enable" trace="enable" uri-template="http://localhost:3000/livre/Delete_livre/{uri.var.id_livre}">
+                                <suspendOnFailure>
+                                    <initialDuration>-1</initialDuration>
+                                    <progressionFactor>-1</progressionFactor>
+                                    <maximumDuration>0</maximumDuration>
+                                </suspendOnFailure>
+                                <markForSuspension>
+                                    <retriesBeforeSuspension>0</retriesBeforeSuspension>
+                                </markForSuspension>
+                            </http>
+                        </endpoint>
+                    </call>
+                    <respond/>
+                </else>
+            </filter>
+        </inSequence>
+        <outSequence/>
+        <faultSequence/>
+    </resource>
+</api>

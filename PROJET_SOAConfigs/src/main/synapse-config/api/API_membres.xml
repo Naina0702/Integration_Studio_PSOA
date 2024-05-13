@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<api context="/membres" name="API_membres" xmlns="http://ws.apache.org/ns/synapse">
+    <resource methods="POST" uri-template="/Ajout_membres">
+        <inSequence>
+            <property expression="$body//nom" name="nom" scope="default" type="STRING"/>
+            <property expression="$body//prenoms" name="prenoms" scope="default" type="STRING"/>
+            <property expression="$body//email" name="email" scope="default" type="STRING"/>
+            <property expression="$body//adresse" name="adresse" scope="default" type="STRING"/>
+            <property expression="$body//telephone" name="telephone" scope="default" type="STRING"/>
+            <call>
+                <endpoint>
+                    <http method="get" uri-template="http://localhost:3000/membres/Generer_Numero_membres">
+                        <suspendOnFailure>
+                            <initialDuration>-1</initialDuration>
+                            <progressionFactor>-1</progressionFactor>
+                            <maximumDuration>0</maximumDuration>
+                        </suspendOnFailure>
+                        <markForSuspension>
+                            <retriesBeforeSuspension>0</retriesBeforeSuspension>
+                        </markForSuspension>
+                    </http>
+                </endpoint>
+            </call>
+            <property expression="json-eval($.id_membres)" name="id_membres" scope="default" type="STRING"/>
+            <payloadFactory media-type="json">
+                <format>{"id_membres":"$1","nom":"$2","prenoms":"$3","email":"$4","adresse":"$5","telephone":"$6"}</format>
+                <args>
+                    <arg evaluator="xml" expression="$ctx:id_membres"/>
+                    <arg evaluator="xml" expression="$ctx:nom"/>
+                    <arg evaluator="xml" expression="$ctx:prenoms"/>
+                    <arg evaluator="xml" expression="$ctx:email"/>
+                    <arg evaluator="xml" expression="$ctx:adresse"/>
+                    <arg evaluator="xml" expression="$ctx:telephone"/>
+                </args>
+            </payloadFactory>
+            <call>
+                <endpoint key="POST_MEMBRE_EP"/>
+            </call>
+            <respond/>
+        </inSequence>
+        <outSequence/>
+        <faultSequence/>
+    </resource>
+    <resource methods="GET" uri-template="/{qr}">
+        <inSequence>
+            <log separator="{blank}">
+                <property name="Methode GET membres" value="&quot;GET Réussi&quot;"/>
+            </log>
+            <call>
+                <endpoint key="EP_GET_MEMBRES"/>
+            </call>
+            <respond/>
+        </inSequence>
+        <outSequence/>
+        <faultSequence/>
+    </resource>
+</api>
