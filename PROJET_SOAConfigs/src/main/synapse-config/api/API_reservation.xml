@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<api context="/Resa" name="API_reservation" xmlns="http://ws.apache.org/ns/synapse">
+    <resource methods="POST" uri-template="/Nouveau_resa">
+        <inSequence>
+            <!-- Extraction des données du livre à partir de la requête POST -->
+            <property expression="$body//id_membres" name="id_membres" scope="default" type="STRING"/>
+            <property expression="$body//id_livre" name="id_livre" scope="default" type="STRING"/>
+            <property expression="$body//date_reservation" name="date_reservation" scope="default" type="STRING"/>
+            <call>
+                <endpoint>
+                    <http method="get" uri-template="http://localhost:3000/reservation/max_id_reservation">
+                        <suspendOnFailure>
+                            <initialDuration>-1</initialDuration>
+                            <progressionFactor>-1</progressionFactor>
+                            <maximumDuration>0</maximumDuration>
+                        </suspendOnFailure>
+                        <markForSuspension>
+                            <retriesBeforeSuspension>0</retriesBeforeSuspension>
+                        </markForSuspension>
+                    </http>
+                </endpoint>
+            </call>
+            <property expression="json-eval($.id_resa)" name="id_resa" scope="default" type="INTEGER"/>
+            <payloadFactory media-type="json">
+                <format>{"id_resa":"$1","id_membres":"$2","id_livre":"$3","date_reservation":"$4","dispo_livre":0}</format>
+                <args>
+                    <arg evaluator="xml" expression="$ctx:id_resa"/>
+                    <arg evaluator="xml" expression="$ctx:id_membres"/>
+                    <arg evaluator="xml" expression="$ctx:id_livre"/>
+                    <arg evaluator="xml" expression="$ctx:date_reservation"/>
+                </args>
+            </payloadFactory>
+            <call>
+                <endpoint key="EP_RESA_ADD"/>
+            </call>
+            <respond/>
+        </inSequence>
+        <outSequence/>
+        <faultSequence/>
+    </resource>
+    <resource methods="GET" uri-template="/liste_resa">
+        <inSequence>
+            <log separator="{blank}"/>
+            <call>
+                <endpoint>
+                    <http method="get" uri-template="http://localhost:3000/reservation/liste">
+                        <suspendOnFailure>
+                            <initialDuration>-1</initialDuration>
+                            <progressionFactor>-1</progressionFactor>
+                            <maximumDuration>0</maximumDuration>
+                        </suspendOnFailure>
+                        <markForSuspension>
+                            <retriesBeforeSuspension>0</retriesBeforeSuspension>
+                        </markForSuspension>
+                    </http>
+                </endpoint>
+            </call>
+            <respond/>
+        </inSequence>
+        <outSequence/>
+        <faultSequence/>
+    </resource>
+    <resource methods="POST" uri-template="/Nouveau_resa_livre_dispo">
+        <inSequence>
+            <!-- Extraction des données du livre à partir de la requête POST -->
+            <property expression="$body//id_membres" name="id_membres" scope="default" type="STRING"/>
+            <property expression="$body//id_livre" name="id_livre" scope="default" type="STRING"/>
+            <property expression="$body//date_reservation" name="date_reservation" scope="default" type="STRING"/>
+            <call>
+                <endpoint>
+                    <http method="get" uri-template="http://localhost:3000/reservation/max_id_reservation">
+                        <suspendOnFailure>
+                            <initialDuration>-1</initialDuration>
+                            <progressionFactor>-1</progressionFactor>
+                            <maximumDuration>0</maximumDuration>
+                        </suspendOnFailure>
+                        <markForSuspension>
+                            <retriesBeforeSuspension>0</retriesBeforeSuspension>
+                        </markForSuspension>
+                    </http>
+                </endpoint>
+            </call>
+            <property expression="json-eval($.id_resa)" name="id_resa" scope="default" type="INTEGER"/>
+            <payloadFactory media-type="json">
+                <format>{"id_resa":"$1","id_membres":"$2","id_livre":"$3","date_reservation":"$4","dispo_livre":1}</format>
+                <args>
+                    <arg evaluator="xml" expression="$ctx:id_resa"/>
+                    <arg evaluator="xml" expression="$ctx:id_membres"/>
+                    <arg evaluator="xml" expression="$ctx:id_livre"/>
+                    <arg evaluator="xml" expression="$ctx:date_reservation"/>
+                </args>
+            </payloadFactory>
+            <call>
+                <endpoint key="EP_RESA_ADD"/>
+            </call>
+            <payloadFactory media-type="json">
+                <format>{"exemplaire":1,"signe":"-","id_livre":"$1"}</format>
+                <args>
+                    <arg evaluator="xml" expression="$ctx:id_livre"/>
+                </args>
+            </payloadFactory>
+            <call>
+                <endpoint key="EP_UPDATE_DISPO"/>
+            </call>
+            <respond/>
+        </inSequence>
+        <outSequence/>
+        <faultSequence/>
+    </resource>
+    <resource methods="POST" uri-template="/Update_resa_id_livre_non_change">
+        <inSequence>
+            <!-- Extraction des données du livre à partir de la requête POST -->
+            <property expression="$body//id_resa" name="id_resa" scope="default" type="INTEGER"/>
+            <property expression="$body//id_membres" name="id_membres" scope="default" type="STRING"/>
+            <property expression="$body//id_livre" name="id_livre" scope="default" type="STRING"/>
+            <property expression="$body//date_reservation" name="date_reservation" scope="default" type="STRING"/>
+            <property expression="$body//dispo_livre" name="dispo_livre" scope="default" type="INTEGER"/>
+            <payloadFactory media-type="json">
+                <format>{"id_resa":"$1","id_membres":"$2","id_livre":"$3","date_reservation":"$4","dispo_livre":$5}</format>
+                <args>
+                    <arg evaluator="xml" expression="$ctx:id_resa"/>
+                    <arg evaluator="xml" expression="$ctx:id_membres"/>
+                    <arg evaluator="xml" expression="$ctx:id_livre"/>
+                    <arg evaluator="xml" expression="$ctx:date_reservation"/>
+                    <arg evaluator="xml" expression="$ctx:dispo_livre"/>
+                </args>
+            </payloadFactory>
+            <call>
+                <endpoint>
+                    <http method="put" uri-template="http://localhost:3000/reservation/update_reservation">
+                        <suspendOnFailure>
+                            <initialDuration>-1</initialDuration>
+                            <progressionFactor>-1</progressionFactor>
+                            <maximumDuration>0</maximumDuration>
+                        </suspendOnFailure>
+                        <markForSuspension>
+                            <retriesBeforeSuspension>0</retriesBeforeSuspension>
+                        </markForSuspension>
+                    </http>
+                </endpoint>
+            </call>
+            <respond/>
+        </inSequence>
+        <outSequence/>
+        <faultSequence/>
+    </resource>
+    <resource methods="POST" uri-template="/Update_resa_id_livre_change">
+        <inSequence>
+            <!-- Extraction des données du livre à partir de la requête POST -->
+            <property expression="$body//id_resa" name="id_resa" scope="default" type="INTEGER"/>
+            <property expression="$body//id_membres" name="id_membres" scope="default" type="STRING"/>
+            <property expression="$body//id_livre" name="id_livre" scope="default" type="STRING"/>
+            <property expression="$body//date_reservation" name="date_reservation" scope="default" type="STRING"/>
+            <property expression="$body//id_livre_data" name="id_livre_data" scope="default" type="STRING"/>
+            <payloadFactory media-type="json">
+                <format>{"id_resa":"$1","id_membres":"$2","id_livre":"$3","date_reservation":"$4","id_livre_data":"$5","dispo_livre":1}</format>
+                <args>
+                    <arg evaluator="xml" expression="$ctx:id_resa"/>
+                    <arg evaluator="xml" expression="$ctx:id_membres"/>
+                    <arg evaluator="xml" expression="$ctx:id_livre"/>
+                    <arg evaluator="xml" expression="$ctx:date_reservation"/>
+                    <arg evaluator="xml" expression="$ctx:id_livre_data"/>
+                    <arg evaluator="xml" expression="$ctx:dispo_livre"/>
+                </args>
+            </payloadFactory>
+            <call>
+                <endpoint>
+                    <http method="put" uri-template="http://localhost:3000/reservation/update_reservation">
+                        <suspendOnFailure>
+                            <initialDuration>-1</initialDuration>
+                            <progressionFactor>-1</progressionFactor>
+                            <maximumDuration>0</maximumDuration>
+                        </suspendOnFailure>
+                        <markForSuspension>
+                            <retriesBeforeSuspension>0</retriesBeforeSuspension>
+                        </markForSuspension>
+                    </http>
+                </endpoint>
+            </call>
+            <payloadFactory media-type="json">
+                <format>{"exemplaire":1,"signe":"-","id_livre":"$1"}</format>
+                <args>
+                    <arg evaluator="xml" expression="$ctx:id_livre"/>
+                </args>
+            </payloadFactory>
+            <call>
+                <endpoint key="EP_UPDATE_DISPO"/>
+            </call>
+            <payloadFactory media-type="json">
+                <format>{"exemplaire":1,"signe":"+","id_livre":"$1"}</format>
+                <args>
+                    <arg evaluator="xml" expression="$ctx:id_livre_data"/>
+                </args>
+            </payloadFactory>
+            <call>
+                <endpoint key="EP_UPDATE_DISPO"/>
+            </call>
+            <respond/>
+        </inSequence>
+        <outSequence/>
+        <faultSequence/>
+    </resource>
+    <resource methods="POST" uri-template="/Update_resa_id_livre_non_dispo">
+        <inSequence>
+            <!-- Extraction des données du livre à partir de la requête POST -->
+            <property expression="$body//id_resa" name="id_resa" scope="default" type="INTEGER"/>
+            <property expression="$body//id_membres" name="id_membres" scope="default" type="STRING"/>
+            <property expression="$body//id_livre" name="id_livre" scope="default" type="STRING"/>
+            <property expression="$body//date_reservation" name="date_reservation" scope="default" type="STRING"/>
+            <property expression="$body//id_livre_data" name="id_livre_data" scope="default" type="STRING"/>
+            <payloadFactory media-type="json">
+                <format>{"id_resa":"$1","id_membres":"$2","id_livre":"$3","date_reservation":"$4","id_livre_data":"$5","dispo_livre":0}</format>
+                <args>
+                    <arg evaluator="xml" expression="$ctx:id_resa"/>
+                    <arg evaluator="xml" expression="$ctx:id_membres"/>
+                    <arg evaluator="xml" expression="$ctx:id_livre"/>
+                    <arg evaluator="xml" expression="$ctx:date_reservation"/>
+                    <arg evaluator="xml" expression="$ctx:id_livre_data"/>
+                    <arg evaluator="xml" expression="$ctx:dispo_livre"/>
+                </args>
+            </payloadFactory>
+            <call>
+                <endpoint>
+                    <http method="put" uri-template="http://localhost:3000/reservation/update_reservation">
+                        <suspendOnFailure>
+                            <initialDuration>-1</initialDuration>
+                            <progressionFactor>-1</progressionFactor>
+                            <maximumDuration>0</maximumDuration>
+                        </suspendOnFailure>
+                        <markForSuspension>
+                            <retriesBeforeSuspension>0</retriesBeforeSuspension>
+                        </markForSuspension>
+                    </http>
+                </endpoint>
+            </call>
+            <payloadFactory media-type="json">
+                <format>{"exemplaire":1,"signe":"+","id_livre":"$1"}</format>
+                <args>
+                    <arg evaluator="xml" expression="$ctx:id_livre"/>
+                </args>
+            </payloadFactory>
+            <call>
+                <endpoint key="EP_UPDATE_DISPO"/>
+            </call>
+            <respond/>
+        </inSequence>
+        <outSequence/>
+        <faultSequence/>
+    </resource>
+    <resource methods="POST" uri-template="/delete_livre">
+        <inSequence>
+            <property expression="$body//id_resa" name="id_resa" scope="default" type="INTEGER"/>
+            <property expression="$body//id_livre" name="id_livre" scope="default" type="STRING"/>
+            <payloadFactory media-type="json">
+                <format>{"id_resa":"$1","id_livre":"$2"}</format>
+                <args>
+                    <arg evaluator="xml" expression="$ctx:id_resa"/>
+                    <arg evaluator="xml" expression="$ctx:id_livre"/>
+                </args>
+            </payloadFactory>
+            <call>
+                <endpoint>
+                    <http method="delete" uri-template="http://localhost:3000/reservation/Delete_resa">
+                        <suspendOnFailure>
+                            <initialDuration>-1</initialDuration>
+                            <progressionFactor>-1</progressionFactor>
+                            <maximumDuration>0</maximumDuration>
+                        </suspendOnFailure>
+                        <markForSuspension>
+                            <retriesBeforeSuspension>0</retriesBeforeSuspension>
+                        </markForSuspension>
+                    </http>
+                </endpoint>
+            </call>
+            <respond/>
+        </inSequence>
+        <outSequence/>
+        <faultSequence/>
+    </resource>
+    <resource methods="POST" uri-template="/delete_livre_dispo">
+        <inSequence>
+            <property expression="$body//id_resa" name="id_resa" scope="default" type="INTEGER"/>
+            <property expression="$body//id_livre" name="id_livre" scope="default" type="STRING"/>
+            <payloadFactory media-type="json">
+                <format>{"id_resa":"$1","id_livre":"$2"}</format>
+                <args>
+                    <arg evaluator="xml" expression="$ctx:id_resa"/>
+                    <arg evaluator="xml" expression="$ctx:id_livre"/>
+                </args>
+            </payloadFactory>
+            <call>
+                <endpoint>
+                    <http method="delete" uri-template="http://localhost:3000/reservation/Delete_resa">
+                        <suspendOnFailure>
+                            <initialDuration>-1</initialDuration>
+                            <progressionFactor>-1</progressionFactor>
+                            <maximumDuration>0</maximumDuration>
+                        </suspendOnFailure>
+                        <markForSuspension>
+                            <retriesBeforeSuspension>0</retriesBeforeSuspension>
+                        </markForSuspension>
+                    </http>
+                </endpoint>
+            </call>
+            <payloadFactory media-type="json">
+                <format>{"exemplaire":1,"signe":"+","id_livre":"$1"}</format>
+                <args>
+                    <arg evaluator="xml" expression="$ctx:id_livre"/>
+                </args>
+            </payloadFactory>
+            <call>
+                <endpoint key="EP_UPDATE_DISPO"/>
+            </call>
+            <respond/>
+        </inSequence>
+        <outSequence/>
+        <faultSequence/>
+    </resource>
+</api>

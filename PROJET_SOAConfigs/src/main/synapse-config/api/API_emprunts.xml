@@ -5,7 +5,6 @@
             <property expression="$body//id_membres" name="id_membres" scope="default" type="STRING"/>
             <property expression="$body//id_livre" name="id_livre" scope="default" type="STRING"/>
             <property expression="$body//date_emprunt" name="date_emprunt" scope="default" type="STRING"/>
-            <property expression="$body//date_retour" name="date_retour" scope="default" type="STRING"/>
             <call>
                 <endpoint>
                     <http method="get" uri-template="http://localhost:3000/emprunts/max_id_emprunts">
@@ -22,6 +21,94 @@
             </call>
             <property expression="json-eval($.id_emprunts)" name="id_emprunts" scope="default" type="STRING"/>
             <payloadFactory media-type="json">
+                <format>{"id_emprunts":"$1","id_membres":"$2","id_livre":"$3","date_emprunt":"$4"}</format>
+                <args>
+                    <arg evaluator="xml" expression="$ctx:id_emprunts"/>
+                    <arg evaluator="xml" expression="$ctx:id_membres"/>
+                    <arg evaluator="xml" expression="$ctx:id_livre"/>
+                    <arg evaluator="xml" expression="$ctx:date_emprunt"/>
+                </args>
+            </payloadFactory>
+            <call>
+                <endpoint key="EP_POST_EMPRUNTS"/>
+            </call>
+            <!-- Création de l'objet JSON contenant disponible et id_livre -->
+            <payloadFactory media-type="json">
+                <format>{"exemplaire":1,"signe":"-","id_livre":"$1"}</format>
+                <args>
+                    <arg evaluator="xml" expression="$ctx:id_livre"/>
+                </args>
+            </payloadFactory>
+            <call>
+                <endpoint key="EP_UPDATE_DISPO"/>
+            </call>
+            <respond/>
+        </inSequence>
+        <outSequence/>
+        <faultSequence/>
+    </resource>
+    <resource methods="GET" uri-template="/liste_emprunt">
+        <inSequence>
+            <call>
+                <endpoint>
+                    <http method="get" uri-template="http://localhost:3000/emprunts/all">
+                        <suspendOnFailure>
+                            <initialDuration>-1</initialDuration>
+                            <progressionFactor>-1</progressionFactor>
+                            <maximumDuration>0</maximumDuration>
+                        </suspendOnFailure>
+                        <markForSuspension>
+                            <retriesBeforeSuspension>0</retriesBeforeSuspension>
+                        </markForSuspension>
+                    </http>
+                </endpoint>
+            </call>
+            <respond/>
+        </inSequence>
+        <outSequence/>
+        <faultSequence/>
+    </resource>
+    <resource methods="POST" uri-template="/delete_emprunt">
+        <inSequence>
+            <property expression="$body//id_emprunts" name="id_emprunts" scope="default" type="INTEGER"/>
+            <property expression="$body//id_livre" name="id_livre" scope="default" type="STRING"/>
+            <call>
+                <endpoint>
+                    <http method="delete" uri-template="http://localhost:3000/Emprunts/Delete_emprunts">
+                        <suspendOnFailure>
+                            <initialDuration>-1</initialDuration>
+                            <progressionFactor>-1</progressionFactor>
+                            <maximumDuration>0</maximumDuration>
+                        </suspendOnFailure>
+                        <markForSuspension>
+                            <retriesBeforeSuspension>0</retriesBeforeSuspension>
+                        </markForSuspension>
+                    </http>
+                </endpoint>
+            </call>
+            <!-- Création de l'objet JSON contenant disponible et id_livre -->
+            <payloadFactory media-type="json">
+                <format>{"exemplaire":1,"signe":"+","id_livre":"$1"}</format>
+                <args>
+                    <arg evaluator="xml" expression="$ctx:id_livre"/>
+                </args>
+            </payloadFactory>
+            <call>
+                <endpoint key="EP_UPDATE_DISPO"/>
+            </call>
+            <respond/>
+        </inSequence>
+        <outSequence/>
+        <faultSequence/>
+    </resource>
+    <resource methods="POST" uri-template="/Retour_livre">
+        <inSequence>
+            <property expression="$body//id_emprunts" name="id_emprunts" scope="default" type="INTEGER"/>
+            <property expression="$body//id_membres" name="id_membres" scope="default" type="STRING"/>
+            <property expression="$body//id_livre" name="id_livre" scope="default" type="STRING"/>
+            <property expression="$body//date_emprunt" name="date_emprunt" scope="default" type="STRING"/>
+            <property expression="$body//date_retour" name="date_retour" scope="default" type="STRING"/>
+            <payloadFactory media-type="json">
                 <format>{"id_emprunts":"$1","id_membres":"$2","id_livre":"$3","date_emprunt":"$4","date_retour":"$5"}</format>
                 <args>
                     <arg evaluator="xml" expression="$ctx:id_emprunts"/>
@@ -32,11 +119,104 @@
                 </args>
             </payloadFactory>
             <call>
+                <endpoint>
+                    <http method="put" uri-template="http://localhost:3000/emprunts/update_emprunts">
+                        <suspendOnFailure>
+                            <initialDuration>-1</initialDuration>
+                            <progressionFactor>-1</progressionFactor>
+                            <maximumDuration>0</maximumDuration>
+                        </suspendOnFailure>
+                        <markForSuspension>
+                            <retriesBeforeSuspension>0</retriesBeforeSuspension>
+                        </markForSuspension>
+                    </http>
+                </endpoint>
+            </call>
+            <payloadFactory media-type="json">
+                <format>{"exemplaire":1,"signe":"+","id_livre":"$1"}</format>
+                <args>
+                    <arg evaluator="xml" expression="$ctx:id_livre"/>
+                </args>
+            </payloadFactory>
+            <call>
+                <endpoint key="EP_UPDATE_DISPO"/>
+            </call>
+            <respond/>
+        </inSequence>
+        <outSequence/>
+        <faultSequence/>
+    </resource>
+    <resource methods="POST" uri-template="/Emprunt_resa">
+        <inSequence>
+            <property expression="$body//id_membres" name="id_membres" scope="default" type="STRING"/>
+            <property expression="$body//id_livre" name="id_livre" scope="default" type="STRING"/>
+            <property expression="$body//date_emprunt" name="date_emprunt" scope="default" type="STRING"/>
+            <call>
+                <endpoint>
+                    <http method="get" uri-template="http://localhost:3000/emprunts/max_id_emprunts">
+                        <suspendOnFailure>
+                            <initialDuration>-1</initialDuration>
+                            <progressionFactor>-1</progressionFactor>
+                            <maximumDuration>0</maximumDuration>
+                        </suspendOnFailure>
+                        <markForSuspension>
+                            <retriesBeforeSuspension>0</retriesBeforeSuspension>
+                        </markForSuspension>
+                    </http>
+                </endpoint>
+            </call>
+            <property expression="json-eval($.id_emprunts)" name="id_emprunts" scope="default" type="STRING"/>
+            <payloadFactory media-type="json">
+                <format>{"id_emprunts":"$1","id_membres":"$2","id_livre":"$3","date_emprunt":"$4"}</format>
+                <args>
+                    <arg evaluator="xml" expression="$ctx:id_emprunts"/>
+                    <arg evaluator="xml" expression="$ctx:id_membres"/>
+                    <arg evaluator="xml" expression="$ctx:id_livre"/>
+                    <arg evaluator="xml" expression="$ctx:date_emprunt"/>
+                </args>
+            </payloadFactory>
+            <call>
                 <endpoint key="EP_POST_EMPRUNTS"/>
             </call>
-            <!-- Création de l'objet JSON contenant disponible et id_livre -->
+            <respond/>
+        </inSequence>
+        <outSequence/>
+        <faultSequence/>
+    </resource>
+    <resource methods="POST" uri-template="/Emprunt_resa_dispo">
+        <inSequence>
+            <property expression="$body//id_membres" name="id_membres" scope="default" type="STRING"/>
+            <property expression="$body//id_livre" name="id_livre" scope="default" type="STRING"/>
+            <property expression="$body//date_emprunt" name="date_emprunt" scope="default" type="STRING"/>
+            <call>
+                <endpoint>
+                    <http method="get" uri-template="http://localhost:3000/emprunts/max_id_emprunts">
+                        <suspendOnFailure>
+                            <initialDuration>-1</initialDuration>
+                            <progressionFactor>-1</progressionFactor>
+                            <maximumDuration>0</maximumDuration>
+                        </suspendOnFailure>
+                        <markForSuspension>
+                            <retriesBeforeSuspension>0</retriesBeforeSuspension>
+                        </markForSuspension>
+                    </http>
+                </endpoint>
+            </call>
+            <property expression="json-eval($.id_emprunts)" name="id_emprunts" scope="default" type="STRING"/>
             <payloadFactory media-type="json">
-                <format>{"exemplaire":1,"id_livre":"$1"}</format>
+                <format>{"id_emprunts":"$1","id_membres":"$2","id_livre":"$3","date_emprunt":"$4"}</format>
+                <args>
+                    <arg evaluator="xml" expression="$ctx:id_emprunts"/>
+                    <arg evaluator="xml" expression="$ctx:id_membres"/>
+                    <arg evaluator="xml" expression="$ctx:id_livre"/>
+                    <arg evaluator="xml" expression="$ctx:date_emprunt"/>
+                </args>
+            </payloadFactory>
+            <call>
+                <endpoint key="EP_POST_EMPRUNTS"/>
+            </call>
+            <payloadFactory media-type="json">
+                <format>{"exemplaire":1,"signe":"-","id_livre":"$1"}</format>
                 <args>
                     <arg evaluator="xml" expression="$ctx:id_livre"/>
                 </args>

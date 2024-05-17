@@ -1,12 +1,12 @@
 openapi: 3.0.1
 info:
-  title: API_emprunts
-  description: API Definition of API_emprunts
+  title: API_reservation
+  description: API Definition of API_reservation
   version: 1.0.0
 servers:
-- url: http://localhost:8290/emprunts
+- url: http://localhost:8290/Resa
 paths:
-  /Ajout:
+  /Nouveau_resa:
     post:
       requestBody:
         description: Sample Payload
@@ -21,12 +21,12 @@ paths:
       responses:
         default:
           description: Default response
-  /liste_emprunt:
+  /liste_resa:
     get:
       responses:
         default:
           description: Default response
-  /delete_emprunt:
+  /Nouveau_resa_livre_dispo:
     post:
       requestBody:
         description: Sample Payload
@@ -41,7 +41,7 @@ paths:
       responses:
         default:
           description: Default response
-  /Retour_livre:
+  /Update_resa_id_livre_non_change:
     post:
       requestBody:
         description: Sample Payload
@@ -56,7 +56,7 @@ paths:
       responses:
         default:
           description: Default response
-  /Emprunt_resa:
+  /Update_resa_id_livre_change:
     post:
       requestBody:
         description: Sample Payload
@@ -71,7 +71,37 @@ paths:
       responses:
         default:
           description: Default response
-  /Emprunt_resa_dispo:
+  /Update_resa_id_livre_non_dispo:
+    post:
+      requestBody:
+        description: Sample Payload
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                payload:
+                  type: object
+        required: false
+      responses:
+        default:
+          description: Default response
+  /delete_livre:
+    post:
+      requestBody:
+        description: Sample Payload
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                payload:
+                  type: object
+        required: false
+      responses:
+        default:
+          description: Default response
+  /delete_livre_dispo:
     post:
       requestBody:
         description: Sample Payload
